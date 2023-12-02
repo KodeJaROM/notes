@@ -30,37 +30,17 @@ class MainActivity : AppCompatActivity() {
 
         sharedPreferences = getSharedPreferences(PREF_NOTES, Context.MODE_PRIVATE)
 
-        // Load notes text from SharedPreferences
-        loadDiaryFromSharedPreferences()
+        // Load notes from SharedPreferences on app start
+        loadNotesFromSharedPreferences()
 
-        findViewById<Button>(R.id.btnSave).setOnClickListener {
-            saveNote()
-        }
-
-        findViewById<Button>(R.id.btnUndo).setOnClickListener {
-            removeLastNote()
-        }
+        findViewById<Button>(R.id.btnSave).setOnClickListener { saveNote() }
+        findViewById<Button>(R.id.btnUndo).setOnClickListener { removeLastNote() }
     }
 
     private fun saveNote() {
         val etNewNoteField = findViewById<EditText>(R.id.etNewNoteField)
         val tvNotesList = findViewById<TextView>(R.id.tvNotesList)
         val newText = etNewNoteField.text.toString()
-
-        fun getCurrentTimeStamp(): String {
-            val currentDateTime =
-                Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
-            return String.format(
-                "%d-%02d-%02d %02d:%02d:%02d",
-                currentDateTime.year,
-                currentDateTime.monthNumber,
-                currentDateTime.dayOfMonth,
-                currentDateTime.hour,
-                currentDateTime.minute,
-                currentDateTime.second
-            )
-        }
-
         if (newText.isNotBlank()) {
             val timeStamp = getCurrentTimeStamp()
             val formattedText = "$timeStamp\n$newText"
@@ -71,9 +51,7 @@ class MainActivity : AppCompatActivity() {
             } else {
                 "$formattedText\n\n$currentNotesText"
             }
-
             sharedPreferences.edit().putString(KEY_NOTES_TEXT, newNotesText).apply()
-
             etNewNoteField.text.clear()
             tvNotesList.text = newNotesText
         } else {
@@ -84,10 +62,23 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun getCurrentTimeStamp(): String {
+        val currentDateTime =
+            Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+        return String.format(
+            "%d-%02d-%02d %02d:%02d:%02d",
+            currentDateTime.year,
+            currentDateTime.monthNumber,
+            currentDateTime.dayOfMonth,
+            currentDateTime.hour,
+            currentDateTime.minute,
+            currentDateTime.second
+        )
+    }
+
     private fun removeLastNote() {
         val tvNotes = findViewById<TextView>(R.id.tvNotesList)
-        AlertDialog.Builder(this)
-            .setTitle("Remove last note")
+        AlertDialog.Builder(this).setTitle("Remove last note")
             .setMessage("Do you really want to remove the last note? This action cannot be undone!")
             .setPositiveButton("Yes") { _, _ ->
                 val currentNotesText = sharedPreferences.getString(KEY_NOTES_TEXT, "")
@@ -98,17 +89,13 @@ class MainActivity : AppCompatActivity() {
                     } else {
                         ""
                     }
-
                     sharedPreferences.edit().putString(KEY_NOTES_TEXT, newNotesText).apply()
-
                     tvNotes.text = newNotesText
                 }
-            }
-            .setNegativeButton("No", null)
-            .show()
+            }.setNegativeButton("No", null).show()
     }
 
-    private fun loadDiaryFromSharedPreferences() {
+    private fun loadNotesFromSharedPreferences() {
         val notesText = sharedPreferences.getString(KEY_NOTES_TEXT, "")
         findViewById<TextView>(R.id.tvNotesList).text = notesText
     }
