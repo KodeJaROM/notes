@@ -63,17 +63,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getCurrentTimeStamp(): String {
-        val currentDateTime =
-            Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
-        return String.format(
-            "%d-%02d-%02d %02d:%02d:%02d",
-            currentDateTime.year,
-            currentDateTime.monthNumber,
-            currentDateTime.dayOfMonth,
-            currentDateTime.hour,
-            currentDateTime.minute,
-            currentDateTime.second
-        )
+        return Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).toString()
     }
 
     private fun removeLastNote() {
