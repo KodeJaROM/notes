@@ -1,7 +1,6 @@
 package com.kodejarom.notes
 
 
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Build
@@ -13,20 +12,17 @@ import androidx.appcompat.app.AppCompatActivity
 
 class MainActivity : AppCompatActivity() {
 
-    private val PREF_NOTES = "PREF_NOTES"
-    private val KEY_NOTES_TEXT = "KEY_NOTES_TEXT"
-
     private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var tvNotesList: TextView
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        sharedPreferences = getSharedPreferences(PREF_NOTES, Context.MODE_PRIVATE)
+        sharedPreferences = MyApplication.getSharedPreferences(this)
 
-        // Load notes from SharedPreferences on app start
-        loadNotesFromSharedPreferences()
+        tvNotesList = findViewById(R.id.tvNotesList)
 
         val fabNewNote: View = findViewById(R.id.fabNewNote)
         fabNewNote.setOnClickListener {
@@ -34,9 +30,13 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
     }
+    override fun onResume() {
+        super.onResume()
+        loadNotesFromSharedPreferences()
+    }
 
     private fun loadNotesFromSharedPreferences() {
-        val notesText = sharedPreferences.getString(KEY_NOTES_TEXT, "")
-        findViewById<TextView>(R.id.tvNotesList).text = notesText
+        val notesText = sharedPreferences.getString(MyApplication.KEY_NOTES_TEXT, "")
+        tvNotesList.text = notesText
     }
 }

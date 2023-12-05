@@ -18,14 +18,13 @@ import android.content.SharedPreferences
 @RequiresApi(Build.VERSION_CODES.O)
 class NoteActivity : AppCompatActivity() {
 
-    private val PREF_NOTES = "PREF_NOTES"
-    private val KEY_NOTES_TEXT = "KEY_NOTES_TEXT"
 
     private lateinit var sharedPreferences: SharedPreferences
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_note)
 
+        sharedPreferences = MyApplication.getSharedPreferences(this)
 
         findViewById<Button>(R.id.btnSave).setOnClickListener { saveNote() }
         findViewById<Button>(R.id.btnUndo).setOnClickListener { removeLastNote() }
@@ -33,21 +32,19 @@ class NoteActivity : AppCompatActivity() {
 
     private fun saveNote() {
         val etNewNoteField = findViewById<EditText>(R.id.etNewNoteField)
-        val tvNotesList = findViewById<TextView>(R.id.tvNotesList)
         val newText = etNewNoteField.text.toString()
         if (newText.isNotBlank()) {
             val timeStamp = getCurrentTimeStamp()
             val formattedText = "$timeStamp\n$newText"
 
-            val currentNotesText = sharedPreferences.getString(KEY_NOTES_TEXT, "")
+            val currentNotesText = sharedPreferences.getString(MyApplication.KEY_NOTES_TEXT, "")
             val newNotesText = if (currentNotesText.isNullOrEmpty()) {
                 formattedText
             } else {
                 "$formattedText\n\n$currentNotesText"
             }
-            sharedPreferences.edit().putString(KEY_NOTES_TEXT, newNotesText).apply()
-            etNewNoteField.text.clear()
-            tvNotesList.text = newNotesText
+            sharedPreferences.edit().putString(MyApplication.KEY_NOTES_TEXT, newNotesText).apply()
+            finish() // Closes the notes activity
         } else {
             val toast = Toast.makeText(
                 this, getString(R.string.error_empty_input), Toast.LENGTH_SHORT
@@ -60,12 +57,14 @@ class NoteActivity : AppCompatActivity() {
         return Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).toString()
     }
 
-    private fun removeLastNote() {
-        val tvNotes = findViewById<TextView>(R.id.tvNotesList)
+    private fun removeLastNote() { // TODO: This doesn't work 
+        if (!::sharedPreferences.isInitialized) {
+            sharedPreferences = MyApplication.getSharedPreferences(this)
+        }
         AlertDialog.Builder(this).setTitle("Remove last note")
             .setMessage("Do you really want to remove the last note? This action cannot be undone!")
             .setPositiveButton("Yes") { _, _ ->
-                val currentNotesText = sharedPreferences.getString(KEY_NOTES_TEXT, "")
+                val currentNotesText = sharedPreferences.getString(MyApplication.KEY_NOTES_TEXT, "")
                 if (currentNotesText?.isNotBlank() == true) {
                     val lines = currentNotesText.split("\n\n")
                     val newNotesText = if (lines.size > 1) {
@@ -73,10 +72,10 @@ class NoteActivity : AppCompatActivity() {
                     } else {
                         ""
                     }
-                    sharedPreferences.edit().putString(KEY_NOTES_TEXT, newNotesText).apply()
-                    tvNotes.text = newNotesText
+                    sharedPreferences.edit().putString(MyApplication.KEY_NOTES_TEXT, newNotesText).apply()
                 }
             }.setNegativeButton("No", null).show()
+        finish()
     }
 
 }
