@@ -1,7 +1,6 @@
 package com.kodejarom.notes
 
 
-import android.app.AlertDialog
 import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
@@ -19,11 +18,22 @@ class NoteActivity : AppCompatActivity() {
 
 
     private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var etNewNoteField: EditText
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_note)
 
         sharedPreferences = MyApplication.getSharedPreferences(this)
+        etNewNoteField = findViewById(R.id.etNewNoteField)
+
+        // Retrieve the note key from the Intent if included
+        val noteKey = intent.getStringExtra("noteKey")
+
+        // Retrieve the note content based on the key from SharedPreferences
+        val noteContent = sharedPreferences.getString(noteKey, "")
+
+        // Set the note content in the EditText
+        etNewNoteField.setText(noteContent)
 
         findViewById<Button>(R.id.btnSave).setOnClickListener { saveNote() }
         findViewById<Button>(R.id.btnCancel).setOnClickListener { finish() }
@@ -31,11 +41,14 @@ class NoteActivity : AppCompatActivity() {
 
 
     private fun saveNote() {
-        val etNewNoteField = findViewById<EditText>(R.id.etNewNoteField)
         val newText = etNewNoteField.text.toString()
 
         if (newText.isNotBlank()) {
-            val uniqueKey = getCurrentTimeStamp()  // Unique key for each note based on timestamp
+            // Check if a note key is provided in the Intent
+            val noteKeyFromIntent = intent.getStringExtra("noteKey")
+
+            // Use the provided note key or generate a new unique timestamp key
+            val uniqueKey = noteKeyFromIntent ?: getCurrentTimeStamp()
 
             sharedPreferences.edit().putString(uniqueKey, newText).apply()
             finish() // Closes the notes activity

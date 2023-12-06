@@ -43,6 +43,14 @@ class MainActivity : AppCompatActivity() {
             deleteNoteAtPosition(position)
             true
         }
+
+        //Handle pressing notesListView item
+        notesListView.setOnItemClickListener { _, _, position, _ ->
+            val noteToOpen = sharedPreferences.all.keys.toList()[position]
+            val intent = Intent(this@MainActivity, NoteActivity::class.java)
+            intent.putExtra("noteKey", noteToOpen)
+            startActivity(intent)
+        }
     }
 
     override fun onResume() {
