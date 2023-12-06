@@ -6,6 +6,8 @@ import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.widget.ArrayAdapter
+import android.widget.ListView
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -22,7 +24,8 @@ class MainActivity : AppCompatActivity() {
 
         sharedPreferences = MyApplication.getSharedPreferences(this)
 
-        tvNotesList = findViewById(R.id.tvNotesList)
+//        tvNotesList = findViewById(R.id.tvNotesList)
+        var notesListView = findViewById<ListView>(R.id.notesListView)
 
         val fabNewNote: View = findViewById(R.id.fabNewNote)
         fabNewNote.setOnClickListener {
@@ -30,13 +33,32 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
     }
+
     override fun onResume() {
         super.onResume()
         loadNotesFromSharedPreferences()
     }
 
     private fun loadNotesFromSharedPreferences() {
-        val notesText = sharedPreferences.getString(MyApplication.KEY_NOTES_TEXT, "")
-        tvNotesList.text = notesText
+        val notesListView = findViewById<ListView>(R.id.notesListView)
+
+// Retrieve all keys from SharedPreferences
+        val allKeys = sharedPreferences.all.keys.toList()
+
+// Create an ArrayAdapter to bind the data to the ListView
+        val adapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1)
+
+// Iterate through the keys and retrieve the corresponding values (notes)
+        for (key in allKeys) {
+            val note = sharedPreferences.getString(key, "")
+            if (note != null && note.isNotEmpty()) {
+                adapter.add(note)
+            }
+        }
+
+// Set the adapter to the ListView
+        notesListView.adapter = adapter
+
     }
+
 }

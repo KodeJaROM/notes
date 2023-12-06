@@ -1,19 +1,18 @@
 package com.kodejarom.notes
 
 
+import android.app.AlertDialog
+import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
-import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import android.app.AlertDialog
-import android.content.SharedPreferences
 
 @RequiresApi(Build.VERSION_CODES.O)
 class NoteActivity : AppCompatActivity() {
@@ -30,20 +29,15 @@ class NoteActivity : AppCompatActivity() {
         findViewById<Button>(R.id.btnUndo).setOnClickListener { removeLastNote() }
     }
 
+
     private fun saveNote() {
         val etNewNoteField = findViewById<EditText>(R.id.etNewNoteField)
         val newText = etNewNoteField.text.toString()
-        if (newText.isNotBlank()) {
-            val timeStamp = getCurrentTimeStamp()
-            val formattedText = "$timeStamp\n$newText"
 
-            val currentNotesText = sharedPreferences.getString(MyApplication.KEY_NOTES_TEXT, "")
-            val newNotesText = if (currentNotesText.isNullOrEmpty()) {
-                formattedText
-            } else {
-                "$formattedText\n\n$currentNotesText"
-            }
-            sharedPreferences.edit().putString(MyApplication.KEY_NOTES_TEXT, newNotesText).apply()
+        if (newText.isNotBlank()) {
+            val uniqueKey = getCurrentTimeStamp()  // Unique key for each note based on timestamp
+
+            sharedPreferences.edit().putString(uniqueKey, newText).apply()
             finish() // Closes the notes activity
         } else {
             val toast = Toast.makeText(
@@ -52,6 +46,7 @@ class NoteActivity : AppCompatActivity() {
             toast.show()
         }
     }
+
 
     private fun getCurrentTimeStamp(): String {
         return Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).toString()
@@ -72,7 +67,8 @@ class NoteActivity : AppCompatActivity() {
                     } else {
                         ""
                     }
-                    sharedPreferences.edit().putString(MyApplication.KEY_NOTES_TEXT, newNotesText).apply()
+                    sharedPreferences.edit().putString(MyApplication.KEY_NOTES_TEXT, newNotesText)
+                        .apply()
                 }
             }.setNegativeButton("No", null).show()
         finish()

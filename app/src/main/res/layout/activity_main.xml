@@ -3,11 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/tvNotesList"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:textStyle="bold"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabNewNote"
@@ -17,5 +12,15 @@
         android:layout_margin="16dp"
         android:contentDescription="@string/new_note"
         app:srcCompat="@android:drawable/ic_input_add" />
+
+    <ListView
+        android:id="@+id/notesListView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <TextView
+        android:id="@+id/noteListItem"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
