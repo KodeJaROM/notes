@@ -1,6 +1,5 @@
 package com.kodejarom.notes
 
-
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Build
@@ -9,11 +8,14 @@ import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var notesListView: ListView
+    private lateinit var adapter: ArrayAdapter<String>
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,6 +29,20 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this@MainActivity, NoteActivity::class.java)
             startActivity(intent)
         }
+
+        notesListView = findViewById(R.id.notesListView)
+
+        // Create an ArrayAdapter to bind the data to the ListView
+        adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1)
+
+        // Set the adapter to the ListView
+        notesListView.adapter = adapter
+
+        // Handle long press on notesListView items
+        notesListView.setOnItemLongClickListener { _, _, position, _ ->
+            deleteNoteAtPosition(position)
+            true
+        }
     }
 
     override fun onResume() {
@@ -35,23 +51,33 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loadNotesFromSharedPreferences() {
-        val notesListView = findViewById<ListView>(R.id.notesListView)
+        // Clear the adapter before reloading notes
+        adapter.clear()
 
-// Retrieve all keys from SharedPreferences
+        // Retrieve all keys from SharedPreferences
         val allKeys = sharedPreferences.all.keys.toList()
 
-// Create an ArrayAdapter to bind the data to the ListView
-        val adapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1)
-
-// Iterate through the keys and retrieve the corresponding values (notes)
+        // Iterate through the keys and retrieve the corresponding values (notes)
         for (key in allKeys) {
             val note = sharedPreferences.getString(key, "")
             if (!note.isNullOrEmpty()) {
                 adapter.add(note)
             }
         }
+    }
 
-// Set the adapter to the ListView
-        notesListView.adapter = adapter
+    private fun deleteNoteAtPosition(position: Int) {
+        AlertDialog.Builder(this).setTitle("Delete note")
+            .setMessage("Do you really want to delete the selected note? This action cannot be undone!")
+            .setPositiveButton("Yes") { _, _ ->
+                // Get the key at the selected position
+                val keyToDelete = sharedPreferences.all.keys.toList()[position]
+
+                // Remove the note from SharedPreferences
+                sharedPreferences.edit().remove(keyToDelete).apply()
+
+                // Reload notes after deletion
+                loadNotesFromSharedPreferences()
+            }.setNegativeButton("No", null).show()
     }
 }
