@@ -3,6 +3,6 @@
     <string name="notes_input_hint">Write your note here...</string>
     <string name="save">Save</string>
     <string name="error_empty_input">Empty or blank input cannot be saved</string>
-    <string name="undo">Undo</string>
     <string name="new_note">New Note</string>
+    <string name="cancel">Cancel</string>
 </resources>

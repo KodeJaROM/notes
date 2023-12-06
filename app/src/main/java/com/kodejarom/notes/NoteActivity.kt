@@ -26,7 +26,7 @@ class NoteActivity : AppCompatActivity() {
         sharedPreferences = MyApplication.getSharedPreferences(this)
 
         findViewById<Button>(R.id.btnSave).setOnClickListener { saveNote() }
-        findViewById<Button>(R.id.btnUndo).setOnClickListener { removeLastNote() }
+        findViewById<Button>(R.id.btnCancel).setOnClickListener { finish() }
     }
 
 
@@ -51,28 +51,4 @@ class NoteActivity : AppCompatActivity() {
     private fun getCurrentTimeStamp(): String {
         return Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).toString()
     }
-
-
-    private fun removeLastNote() { // TODO: This doesn't work 
-        if (!::sharedPreferences.isInitialized) {
-            sharedPreferences = MyApplication.getSharedPreferences(this)
-        }
-        AlertDialog.Builder(this).setTitle("Remove last note")
-            .setMessage("Do you really want to remove the last note? This action cannot be undone!")
-            .setPositiveButton("Yes") { _, _ ->
-                val currentNotesText = sharedPreferences.getString(MyApplication.KEY_NOTES_TEXT, "")
-                if (currentNotesText?.isNotBlank() == true) {
-                    val lines = currentNotesText.split("\n\n")
-                    val newNotesText = if (lines.size > 1) {
-                        lines.subList(1, lines.size).joinToString("\n\n")
-                    } else {
-                        ""
-                    }
-                    sharedPreferences.edit().putString(MyApplication.KEY_NOTES_TEXT, newNotesText)
-                        .apply()
-                }
-            }.setNegativeButton("No", null).show()
-        finish()
-    }
-
 }
