@@ -52,6 +52,7 @@ class NoteActivity : AppCompatActivity() {
         return Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).toString()
     }
 
+
     private fun removeLastNote() { // TODO: This doesn't work 
         if (!::sharedPreferences.isInitialized) {
             sharedPreferences = MyApplication.getSharedPreferences(this)

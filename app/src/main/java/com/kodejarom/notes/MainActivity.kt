@@ -8,14 +8,12 @@ import android.os.Bundle
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.ListView
-import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var sharedPreferences: SharedPreferences
-    private lateinit var tvNotesList: TextView
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,9 +21,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         sharedPreferences = MyApplication.getSharedPreferences(this)
-
-//        tvNotesList = findViewById(R.id.tvNotesList)
-        var notesListView = findViewById<ListView>(R.id.notesListView)
 
         val fabNewNote: View = findViewById(R.id.fabNewNote)
         fabNewNote.setOnClickListener {
@@ -51,14 +46,12 @@ class MainActivity : AppCompatActivity() {
 // Iterate through the keys and retrieve the corresponding values (notes)
         for (key in allKeys) {
             val note = sharedPreferences.getString(key, "")
-            if (note != null && note.isNotEmpty()) {
+            if (!note.isNullOrEmpty()) {
                 adapter.add(note)
             }
         }
 
 // Set the adapter to the ListView
         notesListView.adapter = adapter
-
     }
-
 }
