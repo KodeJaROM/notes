@@ -5,4 +5,5 @@
     <string name="error_empty_input">Empty or blank input cannot be saved</string>
     <string name="new_note">New Note</string>
     <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
 </resources>

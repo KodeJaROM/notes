@@ -28,6 +28,17 @@
         app:layout_constraintTop_toBottomOf="@id/etNewNoteField" />
 
     <Button
+        android:id="@+id/btnDelete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:text="@string/delete"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/etNewNoteField"
+        app:layout_constraintStart_toStartOf="@id/btnCancel"
+        app:layout_constraintEnd_toEndOf="@id/btnSave"/>
+
+    <Button
         android:id="@+id/btnSave"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -8,6 +8,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
@@ -37,6 +38,7 @@ class NoteActivity : AppCompatActivity() {
 
         findViewById<Button>(R.id.btnSave).setOnClickListener { saveNote() }
         findViewById<Button>(R.id.btnCancel).setOnClickListener { finish() }
+        findViewById<Button>(R.id.btnDelete).setOnClickListener { deleteNote() }
     }
 
 
@@ -58,6 +60,22 @@ class NoteActivity : AppCompatActivity() {
             )
             toast.show()
         }
+    }
+
+
+    private fun deleteNote() {
+        AlertDialog.Builder(this).setTitle("Delete note")
+            .setMessage("Do you really want to delete this note? This action cannot be undone!")
+            .setPositiveButton("Yes") { _, _ ->
+                // Get the key from intent
+                val noteToDelete = intent.getStringExtra("noteKey")
+
+                // Remove the note from SharedPreferences
+                sharedPreferences.edit().remove(noteToDelete).apply()
+
+                // close NoteActivity
+                finish()
+            }.setNegativeButton("No", null).show()
     }
 
 
