@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
         notesListView = findViewById(R.id.notesListView)
 
         // Create an ArrayAdapter to bind the data to the ListView
-        adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1)
+        adapter = ArrayAdapter(this, R.layout.list_item_note)
 
         // Set the adapter to the ListView
         notesListView.adapter = adapter
