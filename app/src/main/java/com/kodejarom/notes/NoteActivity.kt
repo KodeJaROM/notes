@@ -6,6 +6,7 @@ import android.os.Build
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
@@ -37,8 +38,8 @@ class NoteActivity : AppCompatActivity() {
         etNewNoteField.setText(noteContent)
 
         findViewById<Button>(R.id.btnSave).setOnClickListener { saveNote() }
-        findViewById<Button>(R.id.btnCancel).setOnClickListener { finish() }
-        findViewById<Button>(R.id.btnDelete).setOnClickListener { deleteNote() }
+        findViewById<ImageButton>(R.id.btnCancel).setOnClickListener { finish() }
+        findViewById<ImageButton>(R.id.btnDelete).setOnClickListener { deleteNote() }
     }
 
 
